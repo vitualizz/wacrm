@@ -1,0 +1,19 @@
+version: 1
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - npm ci
+    build:
+      commands:
+        - env | grep -e SUPABASE_SERVICE_ROLE_KEY -e ENCRYPTION_KEY -e META_APP_ID -e META_APP_SECRET -e AUTOMATION_CRON_SECRET -e ALLOWED_INVITE_HOSTS -e AI_CONTEXT_MESSAGE_LIMIT -e AI_REQUEST_TIMEOUT_MS -e WHATSAPP_TEMPLATES_DRY_RUN >> .env.production
+        - env | grep -e NEXT_PUBLIC_ >> .env.production
+        - npm run build
+  artifacts:
+    baseDirectory: .next
+    files:
+      - '**/*'
+  cache:
+    paths:
+      - node_modules/**/*
+      - .next/cache/**/*
