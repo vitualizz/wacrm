@@ -4,10 +4,7 @@ import { NextResponse } from 'next/server';
 // Amplify SSR runtime, without ever exposing their values. Delete this
 // file once SUPABASE_SERVICE_ROLE_KEY is confirmed present.
 export async function GET() {
-  const allKeys = Object.keys(process.env);
-  const relevantKeys = allKeys.filter(
-    (k) => k.toUpperCase().includes('SUPABASE') || k.toUpperCase().includes('SERVICE_ROLE')
-  );
+  const allKeys = Object.keys(process.env).sort();
 
   return NextResponse.json({
     hasServiceRoleKeyExact: Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY),
@@ -15,9 +12,9 @@ export async function GET() {
     hasAnonKey: Boolean(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY),
     hasSupabaseUrl: Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL),
     hasEncryptionKey: Boolean(process.env.ENCRYPTION_KEY),
-    // Exact key NAMES (never values) matching a loose search — reveals
-    // typos, trailing spaces, or case differences invisible in the console.
-    relevantEnvVarNamesFound: relevantKeys,
+    // ALL env var NAMES (never values) actually visible to this runtime —
+    // reveals the true prefix/passthrough pattern instead of guessing.
+    allEnvVarNames: allKeys,
     totalEnvVarCount: allKeys.length,
   });
 }
